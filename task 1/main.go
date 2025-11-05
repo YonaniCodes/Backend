@@ -1,19 +1,46 @@
 package main
 
-import "fmt"
-func main() {
-	fmt.Println("Hello, World!")
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
 
-
-	fmt.Println("Welcome to Task 1")
-	sum := sumSlices([]int{1, 2, 3, 4, 5})
-	fmt.Println("Sum of slices:", sum)
+// WordFrequencyCount takes a string as input and returns a map containing
+// the frequency of each word in the string.
+// Words are treated in a case-insensitive manner and punctuation is ignored.
+func WordFrequencyCount(text string) map[string]int {
+	// Convert to lowercase for case-insensitive comparison
+	text = strings.ToLower(text)
+	
+	// Remove punctuation using regex - keep only letters, numbers, and spaces
+	reg := regexp.MustCompile(`[^a-z0-9\s]+`)
+	text = reg.ReplaceAllString(text, " ")
+	
+	// Split into words
+	words := strings.Fields(text)
+	
+	// Count frequency
+	frequency := make(map[string]int)
+	for _, word := range words {
+		if word != "" {
+			frequency[word]++
+		}
+	}
+	
+	return frequency
 }
 
-func sumSlices(slices []int) int {
-	sum := 0
-	for _, slice := range slices {
-		sum += slice
+func main() {
+	fmt.Println("Word Frequency Count Example")
+	fmt.Println("============================")
+	
+	text := "Hello world! Hello Go. Go is great. World of Go!"
+	frequency := WordFrequencyCount(text)
+	
+	fmt.Printf("Input: %s\n\n", text)
+	fmt.Println("Word Frequencies:")
+	for word, count := range frequency {
+		fmt.Printf("  %s: %d\n", word, count)
 	}
-	return sum
 }
