@@ -6,14 +6,11 @@ import (
 	"strings"
 )
 
-// WordFrequencyCount takes a string as input and returns a map containing
-// the frequency of each word in the string.
-// Words are treated in a case-insensitive manner and punctuation is ignored.
+ 
 func WordFrequencyCount(text string) map[string]int {
-	// Convert to lowercase for case-insensitive comparison
+ 
 	text = strings.ToLower(text)
-	
-	// Remove punctuation using regex - keep only letters, numbers, and spaces
+ 
 	reg := regexp.MustCompile(`[^a-z0-9\s]+`)
 	text = reg.ReplaceAllString(text, " ")
 	
