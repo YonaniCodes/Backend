@@ -3,13 +3,21 @@ package middleware
 import (
 	"a2sv-backend/task_manager/data"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = []byte("your-secret-key-change-in-production") // In production, use environment variable
+// getJWTSecret returns the JWT secret from environment variable or default
+func getJWTSecret() []byte {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "your-secret-key-change-in-production" // Default fallback
+	}
+	return []byte(secret)
+}
 
 // Claims represents JWT claims
 type Claims struct {
@@ -32,7 +40,7 @@ func GenerateToken(userID int, username, role string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString(getJWTSecret())
 }
 
 // AuthMiddleware validates JWT tokens
@@ -62,7 +70,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrSignatureInvalid
 			}
-			return jwtSecret, nil
+			return getJWTSecret(), nil
 		})
 
 		if err != nil || !token.Valid {
